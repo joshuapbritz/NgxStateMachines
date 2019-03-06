@@ -1,0 +1,20 @@
+<div class="content">
+  <h1>
+    Current State: <i>{{ state }}</i>
+  </h1>
+
+  <button *ngIf="state === 'idle'" (click)="click()">
+    CLICK ME
+  </button>
+
+  <div *ngIf="state === 'done'">
+    <br />
+    {{ data | json }}
+    <br />
+    <br />
+  </div>
+
+  <button *ngIf="state === 'done'" (click)="reset()">
+    RESET
+  </button>
+</div>
