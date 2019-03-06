@@ -54,7 +54,7 @@ export class AsExtendComponent extends Machine implements OnInit {
   }
 
   @StateAction('parsing')
-  public parse(data: any): void {
+  private parse(data: any): void {
     this.nextstate('done');
 
     try {

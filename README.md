@@ -57,9 +57,6 @@ export class AppComponent extends Machine implements OnInit {
   @StateAction('fetching')
   public onFetchSuccess(data: any): void { ... }
 
-  @StateAction('fetching')
-  public onFetchError(message: string): void { ... }
-
   @StateAction('done')
   public displayFetchedData(date: any): void { ... }
 
@@ -100,12 +97,71 @@ export class AppComponent extends Machine implements OnInit {
     this.nextstate('fetching');
 
     setTimeout(() => {
-        this.onFetchSuccess('Fetch succeeded');
+        this.onFetchSuccess(JSON.stringify({ message: 'YAY! It worked' }));
     }, 5000);
   }
 
   ...
 }
+```
+
+What we are doing here, is setting the new state to **fetching**, simulating a call to an api, and then calling the `onFetchSuccess` function (which is one of the functions for the fetching state). Now let's implement the rest of the functions.
+
+```typescript
+import { Machine, StateDeclaration, StateAction } from 'src/app/machine';
+
+export class AppComponent extends Machine implements OnInit {
+  public data: any;
+  ...
+
+  @StateAction('idle')
+  public onButtonClick(): void {
+    this.nextstate('fetching');
+
+    setTimeout(() => {
+        this.onFetchSuccess(JSON.stringify({ message: 'YAY! It worked' }));
+    }, 5000);
+  }
+
+  @StateAction('fetching')
+  private onFetchSuccess(data: any): void {
+      this.nextstate('done')
+      console.log(data);
+      this.displayFetchedData(JSON.parse(data));
+  }
+
+  @StateAction('done')
+  private displayFetchedData(data: any): void {
+      this.data = data;
+  }
+
+  @StateAction('done')
+  public reset(): void {
+      this.nextstate('idle');
+      this.data = void 0;
+  }
+}
+```
+
+Now let's implement our view.
+
+```html
+<h1>Current State: <i>{{ state }}</i></h1>
+
+<button *ngIf="state === 'idle'" (click)="onButtonClick()">
+  CLICK ME
+</button>
+
+<div *ngIf="state === 'done'">
+  <br />
+  {{ data | json }}
+  <br />
+  <br />
+</div>
+
+<button *ngIf="state === 'done'" (click)="reset()">
+  RESET
+</button>
 ```
 
 ### To-Do
