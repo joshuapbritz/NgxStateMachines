@@ -34,7 +34,7 @@ export class AppComponent extends Machine implements OnInit {
 }
 ```
 
-The `StateDeclaration` class can actually take up to three arguments (statename, from, to), but for now we will just use *statename*.
+The `StateDeclaration` class can actually take up to three arguments (statename, from, to), but for now we will just use _statename_.
 
 So, we now have three states in our component: an idle state, a fetching state, and a done state. Now we need to create actions for those states. To do this, we use the `@StateAction` decorator.
 
@@ -68,6 +68,45 @@ export class AppComponent extends Machine implements OnInit {
 }
 ```
 
+We now have the boilerplate of our component, so we can begin implementing a flow. To do this, let's start by defining the second and third parameters of our `StateDeclaration`. Those parameters are _from_ and _to_. As you can probably guess, these parameters allow you to control the exact flow of your state by letting you specify what states can be activated by or can activate other states. For example, our component will look something like this.
+
+```typescript
+import { Machine, StateDeclaration, StateAction } from 'src/app/machine';
+
+export class AppComponent extends Machine implements OnInit {
+  constructor() {
+    super(
+      'idle',
+      new StateDeclaration('idle', 'done', 'fetching'),
+      new StateDeclaration('fetching', 'idle', 'done'),
+      new StateDeclaration('done', 'fetching', 'idle')
+    );
+  }
+
+  ...
+}
+```
+
+This may look a bit ridiculous right now becuase the states for this component are so simple, but when you are dealing with a lot of states, this will be a very useful tool. Now that we have our rules set up, we can implement our logic. To do this, we will make use of the `nextstate` provided by the Machine class. This will be used to moved between states. In our `onButtonClick` function let's add the following functionality.
+
+```typescript
+import { Machine, StateDeclaration, StateAction } from 'src/app/machine';
+
+export class AppComponent extends Machine implements OnInit {
+  ...
+
+  @StateAction('idle')
+  public onButtonClick(): void {
+    this.nextstate('fetching');
+
+    setTimeout(() => {
+        this.onFetchSuccess('Fetch succeeded');
+    }, 5000);
+  }
+
+  ...
+}
+```
 
 ### To-Do
 
