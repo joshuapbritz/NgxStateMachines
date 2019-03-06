@@ -36,6 +36,38 @@ export class AppComponent extends Machine implements OnInit {
 
 The `StateDeclaration` class can actually take up to three arguments (statename, from, to), but for now we will just use *statename*.
 
+So, we now have three states in our component: an idle state, a fetching state, and a done state. Now we need to create actions for those states. To do this, we use the `@StateAction` decorator.
+
+```typescript
+import { Machine, StateDeclaration, StateAction } from 'src/app/machine';
+
+export class AppComponent extends Machine implements OnInit {
+  constructor() {
+    super(
+      'idle',
+      new StateDeclaration('idle'),
+      new StateDeclaration('fetching'),
+      new StateDeclaration('done')
+    );
+  }
+
+  @StateAction('idle')
+  public onButtonClick(): void { ... }
+
+  @StateAction('fetching')
+  public onFetchSuccess(data: any): void { ... }
+
+  @StateAction('fetching')
+  public onFetchError(message: string): void { ... }
+
+  @StateAction('done')
+  public displayFetchedData(date: any): void { ... }
+
+  @StateAction('done')
+  public reset(): void { ... }
+}
+```
+
 
 ### To-Do
 
