@@ -164,6 +164,14 @@ Now let's implement our view.
 </button>
 ```
 
+## Run the project
+
+1. Clone the project
+2. Run `npm install` or `yarn install`
+3. Run `npm start` or `yarn start`
+
+---
+
 ### To-Do
 
 - Add decorator for state specific properties
