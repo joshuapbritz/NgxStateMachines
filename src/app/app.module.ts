@@ -11,8 +11,8 @@ import { RouterModule } from '@angular/router';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      { path: 'as-extend', component: AsExtendComponent },
-      { path: '**', redirectTo: '/as-extend' },
+      { path: '', component: AsExtendComponent },
+      { path: '**', redirectTo: '/' },
     ]),
   ],
   providers: [],
