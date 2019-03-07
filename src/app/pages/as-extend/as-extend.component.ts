@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Machine, StateDeclaration, StateAction } from 'src/app/machine';
+import {
+  Machine,
+  StateDeclaration,
+  StateAction,
+  StateProp,
+} from 'src/app/machine';
 
 @Component({
   selector: 'app-as-extend',
@@ -7,6 +12,7 @@ import { Machine, StateDeclaration, StateAction } from 'src/app/machine';
   styleUrls: ['./as-extend.component.scss'],
 })
 export class AsExtendComponent extends Machine implements OnInit {
+  @StateProp('done')
   public data: any;
 
   constructor() {

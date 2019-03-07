@@ -174,6 +174,6 @@ Now let's implement our view.
 
 ### To-Do
 
-- Add decorator for state specific properties
+- ~~Add decorator for state specific properties~~
 - Generate a state machine schema based on the machine's given states
-- Detailed error handling
+- More detailed error handling

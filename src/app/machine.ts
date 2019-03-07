@@ -45,10 +45,10 @@ export class Machine {
         if (isDevMode()) {
           console.info(
             `%cFrom state %c"${this.state}" %cto state %c"${stateName}"`,
-            `color:#33cccc;font-size: 12px;`,
+            `color:#9b9b9b;font-size: 12px;`,
             `color:#333333;font-size: 12px;font-weight:bolder;`,
-            `color:#33cccc;font-size: 12px;`,
-            `color:#333333;font-size: 12px;font-weight:bolder;`,
+            `color:#9b9b9b;font-size: 12px;`,
+            `color:#333333;font-size: 12px;font-weight:bolder;`
           );
         }
         this.state = stateName;
@@ -117,6 +117,58 @@ export function StateAction(name: string): any {
         `The "@StateAction(...)" decorator can only be used on class methods, but was used on the "${propkey}" property.`
       );
     }
+  };
+}
+
+export function StateProp(name: string): any {
+  return function(target: any, key: any) {
+    let value = name;
+    Object.defineProperty(target, key, {
+      configurable: false,
+      get: function() {
+        if (this.state === name) {
+          return value;
+        } else {
+          const exsist = (this as Machine).states.has(name);
+
+          if (isDevMode()) {
+            if (exsist) {
+              console.warn(
+                `The property "${key}" can only be used in the "${name}" state`
+              );
+            } else {
+              console.warn(
+                `The state "${name}" has not been declared, and so "${key}" cannot be used.\n\n` +
+                  `- If it is meant to be a state in your machine, add it to your state declarations.\n` +
+                  `- If that isn't the problem, try checking your spelling`
+              );
+            }
+          }
+          return undefined;
+        }
+      },
+      set: function(next) {
+        if (this.state === name) {
+          value = next;
+        } else if (isDevMode()) {
+          const exsist = (this as Machine).states.has(name);
+
+          if (isDevMode()) {
+            if (exsist) {
+              console.warn(
+                `The property "${key}" can only be used in the "${name}" state`
+              );
+            } else {
+              console.warn(
+                `The state "${name}" has not been declared, and so "${key}" cannot be used.\n\n` +
+                  `- If it is meant to be a state in your machine, add it to your state declarations.\n` +
+                  `- If that isn't the problem, try checking your spelling`
+              );
+            }
+          }
+        }
+      },
+    });
   };
 }
 // END DECORATORS
