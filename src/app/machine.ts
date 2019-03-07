@@ -43,16 +43,24 @@ export class Machine {
           currentStateDeclaration.to.includes(newStateDeclaration.stateName))
       ) {
         if (isDevMode()) {
-          console.log(`From state "${this.state}" to state "${stateName}"`);
+          console.info(
+            `%cFrom state %c"${this.state}" %cto state %c"${stateName}"`,
+            `color:#33cccc;font-size: 12px;`,
+            `color:#333333;font-size: 12px;font-weight:bolder;`,
+            `color:#33cccc;font-size: 12px;`,
+            `color:#333333;font-size: 12px;font-weight:bolder;`,
+          );
         }
         this.state = stateName;
       } else if (isDevMode()) {
-        console.log(`Cannot set the new state to "${stateName}"`);
+        console.warn(`Cannot set the new state to "${stateName}"`);
       }
     }
   }
 
-  public print(): void {}
+  public print(): void {
+    console.warn(`The "print(...)" method has not been implemented yet`);
+  }
 }
 
 export class StateMachine {
@@ -74,12 +82,8 @@ export class StateMachine {
 }
 
 // DECORATORS
-export function StateAction(name: string, onlyFromState?: string): any {
-  return function(
-    target: Machine,
-    propkey: string,
-    descriptor: PropertyDescriptor
-  ) {
+export function StateAction(name: string): any {
+  return function(_: Machine, propkey: string, descriptor: PropertyDescriptor) {
     if (
       descriptor &&
       descriptor.value &&
@@ -91,16 +95,26 @@ export function StateAction(name: string, onlyFromState?: string): any {
         if (this.state === name) {
           value.bind(this)(...args);
         } else if (isDevMode()) {
-          console.warn(
-            `You cannot invoke "${propkey}(...)" on the current state.\nShould Be: ${name}\nIs: ${
-              target.state
-            }`
-          );
+          const exsist = (this as Machine).states.has(name);
+
+          if (exsist) {
+            console.warn(
+              `You cannot invoke "${propkey}(...)" on the current state.\nShould Be: ${name}\nIs: ${
+                this.state
+              }`
+            );
+          } else {
+            console.warn(
+              `The state "${name}" has not been declared, and so "${propkey}(...)" cannot be invoked.\n\n` +
+                `- If it is meant to be a state in your machine, add it to your state declarations.\n` +
+                `- If that isn't the problem, try checking your spelling`
+            );
+          }
         }
       };
     } else {
-      console.log(
-        `The "@StateAction()" decorator can only be used on class methods`
+      console.warn(
+        `The "@StateAction(...)" decorator can only be used on class methods, but was used on the "${propkey}" property.`
       );
     }
   };
